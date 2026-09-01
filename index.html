@@ -133,7 +133,22 @@
     @media (prefers-reduced-motion: reduce) {
       * { transition: none !important; animation: none !important; }
     }
-  </style>
+  
+    nav.tabs {
+      display: flex; gap: .5rem; margin-top: 1.25rem; flex-wrap: wrap;
+    }
+    nav.tabs a {
+      display: inline-flex; align-items: center; height: 2.25rem; padding: 0 .9rem;
+      border-radius: 999px; font-size: .875rem; font-weight: 500; text-decoration: none;
+      color: var(--muted); border: 1px solid transparent; background: transparent;
+      transition: all .15s ease;
+    }
+    nav.tabs a:hover { color: var(--fg); background: var(--surface-2); }
+    nav.tabs a.active {
+      color: var(--fg); background: var(--surface); border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+</style>
 </head>
 <body>
   <div class="wrap">
@@ -150,6 +165,10 @@
       </div>
       <p class="lede">輸入網址或文字，即時預覽、調色、調整尺寸，然後下載 PNG。不必安裝任何程式。</p>
     </header>
+    <nav class="tabs" aria-label="功能切換">
+      <a href="index.html" class="active" aria-current="page">生成</a>
+      <a href="decode.html">解碼</a>
+    </nav>
     <main>
       <section class="card" aria-labelledby="controls-heading">
         <h2 id="controls-heading" class="sr-only">QR 碼設定</h2>
