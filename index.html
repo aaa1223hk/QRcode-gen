@@ -219,6 +219,17 @@
             </div>
             <p class="hint" id="ecc-hint">約可修復 15%。等級越高，即使部分遮擋仍可掃描，但圖樣更密。</p>
           </fieldset>
+
+          <div class="field" style="margin-top:1rem">
+            <label>中間圖片（可選）</label>
+            <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-top:.4rem">
+              <img id="center-preview" style="width:52px;height:52px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:none;background:var(--surface-2)" alt="">
+              <button type="button" class="btn btn-ghost" id="btn-center-img" style="flex:0 0 auto;height:2.5rem;padding:0 .9rem">選擇圖片</button>
+              <button type="button" class="btn btn-ghost" id="btn-clear-center" style="flex:0 0 auto;height:2.5rem;padding:0 .9rem" disabled>清除</button>
+              <input type="file" id="center-input" accept="image/*" hidden>
+            </div>
+            <p class="hint">建議使用簡單圖示。有圖片時會自動提高錯誤修正等級。</p>
+          </div>
           <p class="alert warn" id="contrast-warn" hidden>前景與背景對比偏低，掃描器可能讀不到。建議改用對比較高的配色。</p>
           <p class="alert err" id="error" hidden></p>
         </div>
@@ -277,6 +288,7 @@ Minimum version required to store current data is: `+i+`.
       var eccHint = document.getElementById("ecc-hint");
       var presetsEl = document.getElementById("presets");
       var ready = false;
+      var centerImg = null; // HTMLImageElement
 
       function normalizeHex(raw) {
         var value = String(raw || "").trim();
@@ -374,12 +386,36 @@ Minimum version required to store current data is: `+i+`.
           setStatus("請輸入內容以產生 QR 碼");
           return;
         }
+        var useEcc = ecc();
+        if (centerImg && (useEcc === "L" || useEcc === "M")) useEcc = "H";
         QRCode.toCanvas(canvas, text, {
-          errorCorrectionLevel: ecc(),
+          errorCorrectionLevel: useEcc,
           width: Number(size.value),
           margin: 4,
           color: { dark: fg.value, light: bg.value }
         }).then(function () {
+          // Overlay center image if present
+          if (centerImg && centerImg.complete && centerImg.naturalWidth > 0) {
+            var ctx = canvas.getContext("2d");
+            var s = Number(size.value);
+            var imgSize = Math.floor(s * 0.26);
+            var x = (s - imgSize) / 2;
+            var y = (s - imgSize) / 2;
+            var pad = 8;
+            ctx.fillStyle = bg.value;
+            // simple rounded rect background
+            ctx.beginPath();
+            var r = 8;
+            var rx = x - pad, ry = y - pad, rw = imgSize + pad * 2, rh = imgSize + pad * 2;
+            ctx.moveTo(rx + r, ry);
+            ctx.arcTo(rx + rw, ry, rx + rw, ry + rh, r);
+            ctx.arcTo(rx + rw, ry + rh, rx, ry + rh, r);
+            ctx.arcTo(rx, ry + rh, rx, ry, r);
+            ctx.arcTo(rx, ry, rx + rw, ry, r);
+            ctx.closePath();
+            ctx.fill();
+            ctx.drawImage(centerImg, x, y, imgSize, imgSize);
+          }
           canvas.hidden = false;
           empty.hidden = true;
           download.disabled = false;
@@ -420,6 +456,40 @@ Minimum version required to store current data is: `+i+`.
       document.querySelectorAll('input[name="ecc"]').forEach(function (el) {
         el.addEventListener("change", render);
       });
+
+      // Center image controls
+      var btnCenter = document.getElementById("btn-center-img");
+      var btnClearCenter = document.getElementById("btn-clear-center");
+      var centerInput = document.getElementById("center-input");
+      var centerPreview = document.getElementById("center-preview");
+      if (btnCenter && centerInput) {
+        btnCenter.addEventListener("click", function () { centerInput.click(); });
+        centerInput.addEventListener("change", function (e) {
+          var file = e.target.files && e.target.files[0];
+          if (!file) return;
+          var url = URL.createObjectURL(file);
+          var img = new Image();
+          img.onload = function () {
+            centerImg = img;
+            centerPreview.src = url;
+            centerPreview.style.display = "block";
+            if (btnClearCenter) btnClearCenter.disabled = false;
+            render();
+          };
+          img.src = url;
+        });
+        if (btnClearCenter) {
+          btnClearCenter.addEventListener("click", function () {
+            centerImg = null;
+            centerPreview.src = "";
+            centerPreview.style.display = "none";
+            btnClearCenter.disabled = true;
+            centerInput.value = "";
+            render();
+          });
+        }
+      }
+
       render();
     })();
   </script>
