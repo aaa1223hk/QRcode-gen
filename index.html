@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
   <title>即時 QR 生成 · 方印工房</title>
   <style>
     :root {
@@ -33,7 +32,7 @@
         linear-gradient(to bottom, rgba(28,25,21,.035) 1px, transparent 1px);
       background-size: 24px 24px;
     }
-    button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+    button:not(:disabled) { cursor: pointer; }
     .wrap { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 2.5rem; }
     @media (min-width: 768px) { .wrap { padding: 2.5rem 2rem; } }
     header { display: flex; flex-direction: column; gap: 1rem; }
@@ -45,38 +44,32 @@
     .kicker { margin: 0; font-size: .875rem; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
     h1 { margin: 0; font-family: var(--display); font-size: clamp(1.75rem, 1.2rem + 2vw, 2.25rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.15; }
     .lede { margin: 0; max-width: 24rem; font-size: .875rem; color: var(--muted); }
-    nav.tabs {
-      display: flex; gap: .5rem; margin-top: 1.25rem; flex-wrap: wrap;
-    }
+    nav.tabs { display: flex; gap: .5rem; margin-top: 1.25rem; flex-wrap: wrap; }
     nav.tabs a {
       display: inline-flex; align-items: center; height: 2.25rem; padding: 0 .9rem;
       border-radius: 999px; font-size: .875rem; font-weight: 500; text-decoration: none;
-      color: var(--muted); border: 1px solid transparent; background: transparent;
-      transition: all .15s ease;
+      color: var(--muted); border: 1px solid transparent;
     }
     nav.tabs a:hover { color: var(--fg); background: var(--surface-2); }
     nav.tabs a.active {
-      color: var(--fg); background: var(--surface); border-color: var(--border);
-      box-shadow: var(--shadow);
+      color: var(--fg); background: var(--surface); border-color: var(--border); box-shadow: var(--shadow);
     }
     main { margin-top: 2rem; display: grid; gap: 1.5rem; }
     @media (min-width: 1024px) { main { grid-template-columns: 1fr 1fr; align-items: start; } }
     .card { background: var(--surface); border-radius: var(--radius-xl); padding: 1.5rem; box-shadow: var(--shadow); }
     @media (min-width: 1024px) { .preview { position: sticky; top: 2rem; } }
-    h2 { margin: 0; font-family: var(--display); font-size: 1.25rem; font-weight: 500; }
+    h2 { margin: 0 0 1rem; font-family: var(--display); font-size: 1.25rem; font-weight: 500; }
     .stack { display: flex; flex-direction: column; gap: 1.1rem; }
     .field { display: flex; flex-direction: column; gap: .5rem; }
     .row { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
     label, legend { font-size: .875rem; font-weight: 500; }
-    legend { padding: 0; }
-    fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+    fieldset { border: 0; margin: 0; padding: 0; }
     .hint { margin: 0; font-size: .875rem; color: var(--muted); }
     textarea {
-      width: 100%; min-height: 6.5rem; resize: vertical; padding: .75rem .9rem;
+      width: 100%; min-height: 6rem; resize: vertical; padding: .75rem .9rem;
       border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2);
-      font: inherit; color: var(--fg); line-height: 1.45;
+      font: inherit; color: var(--fg);
     }
-    textarea:focus { outline: 2px solid var(--fg); outline-offset: 1px; }
     .colors { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .swatch-row { display: flex; gap: .5rem; align-items: center; }
     input[type="color"] {
@@ -87,33 +80,30 @@
       flex: 1; height: 2.5rem; padding: 0 .7rem; border: 1px solid var(--border);
       border-radius: 8px; background: var(--surface-2); font: inherit; font-size: .875rem;
     }
-    .presets { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .presets { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
     .chip {
       min-height: 2.5rem; border: 1px solid var(--border); background: var(--surface);
       border-radius: 8px; color: var(--muted); font: inherit; font-size: .875rem; font-weight: 500;
-      display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: 0 .75rem;
+      display: inline-flex; align-items: center; gap: .5rem; padding: 0 .75rem;
     }
-    .chip[aria-pressed="true"] { border-color: var(--fg); color: var(--fg); background: var(--surface-2); }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .chip .dot { width: 12px; height: 12px; border-radius: 50%; }
     input[type="range"] { width: 100%; accent-color: var(--fg); }
-    .ecc { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .ecc { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
     .ecc-opt {
       min-height: 2.5rem; border: 1px solid var(--border); background: var(--surface);
       border-radius: 8px; color: var(--muted); font: inherit; font-size: .875rem; font-weight: 500;
-      display: inline-flex; align-items: center; justify-content: center; gap: .35rem; padding: 0 .75rem;
-      cursor: pointer;
+      display: inline-flex; align-items: center; gap: .35rem; padding: 0 .75rem; cursor: pointer;
     }
     .ecc-opt:has(input:checked) { border-color: var(--fg); color: var(--fg); background: var(--surface-2); }
     .ecc-opt input { position: absolute; opacity: 0; pointer-events: none; }
     .ecc-opt small { opacity: .7; font-size: .75rem; }
-    .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
-    @media (min-width: 480px) { .style-grid { grid-template-columns: repeat(3, 1fr); } }
+    .style-grid { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
     .style-opt {
       min-height: 2.5rem; border: 1px solid var(--border); border-radius: 10px;
       background: var(--surface-2); display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: .8rem; color: var(--muted); text-align: center; padding: .35rem;
+      cursor: pointer; font-size: .8rem; color: var(--muted); padding: 0 .9rem;
     }
-    .style-opt:has(input:checked), .style-opt.active {
+    .style-opt:has(input:checked) {
       border-color: var(--fg); color: var(--fg); background: var(--surface); box-shadow: var(--shadow);
     }
     .style-opt input { position: absolute; opacity: 0; pointer-events: none; }
@@ -124,20 +114,18 @@
     }
     .img-preview.show { display: block; }
     .btn {
-      flex: 1; height: 2.75rem; border: 0; border-radius: 8px; font: inherit; font-size: .875rem; font-weight: 500;
+      height: 2.75rem; border: 0; border-radius: 8px; font: inherit; font-size: .875rem; font-weight: 500;
       display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: 0 1rem;
     }
     .btn:disabled { opacity: .4; cursor: not-allowed; }
     .btn-primary { background: var(--fg); color: var(--surface); }
     .btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
     .btn-ghost { background: var(--surface); color: var(--fg); border: 1px solid var(--border); box-shadow: var(--shadow); }
-    .btn-ghost:hover:not(:disabled) { background: var(--surface-2); }
-    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; }
-    .preview-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+    .preview-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
     .stage {
       min-height: 280px; display: flex; align-items: center; justify-content: center;
       background: var(--surface-2); border-radius: var(--radius-lg); border: 1px dashed var(--border);
-      padding: 1.25rem; overflow: hidden;
+      padding: 1.25rem;
     }
     .stage canvas { max-width: 100%; height: auto; border-radius: 8px; }
     .empty { margin: 0; color: var(--subtle); font-size: .9rem; text-align: center; }
@@ -146,10 +134,6 @@
     .alert.warn { background: #f8f0e0; color: var(--warn); }
     .alert.err { background: #fdf2f0; color: var(--danger); }
     .count { font-size: .875rem; color: var(--muted); }
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
     footer { margin-top: 2.5rem; text-align: center; font-size: .8rem; color: var(--subtle); }
   </style>
 </head>
@@ -169,8 +153,8 @@
       <p class="lede">輸入網址或文字，即時預覽、調色、中間圖片與模組樣式，然後下載 PNG。完整支援中文。</p>
     </header>
 
-    <nav class="tabs" aria-label="功能切換">
-      <a href="index.html" class="active" aria-current="page">生成</a>
+    <nav class="tabs">
+      <a href="index.html" class="active">生成</a>
       <a href="decode.html">解碼</a>
     </nav>
 
@@ -182,8 +166,7 @@
               <label for="content">內容</label>
               <span class="count" id="count">0 字</span>
             </div>
-            <textarea id="content" placeholder="https:// 或任何文字（完整支援中文）" spellcheck="false" autocomplete="off"></textarea>
-            <p class="hint">網址、名片資訊或任何想編碼的內容，輸入後會立即更新預覽。</p>
+            <textarea id="content" placeholder="輸入文字或網址（支援中文）" spellcheck="false"></textarea>
           </div>
 
           <div class="colors">
@@ -191,22 +174,22 @@
               <label for="fg">前景色</label>
               <div class="swatch-row">
                 <input id="fg" type="color" value="#1c1915" />
-                <input id="fg-hex" type="text" value="#1c1915" spellcheck="false" />
+                <input id="fg-hex" type="text" value="#1c1915" />
               </div>
             </div>
             <div class="field">
               <label for="bg">背景色</label>
               <div class="swatch-row">
                 <input id="bg" type="color" value="#ffffff" />
-                <input id="bg-hex" type="text" value="#ffffff" spellcheck="false" />
+                <input id="bg-hex" type="text" value="#ffffff" />
               </div>
             </div>
           </div>
 
-          <fieldset>
-            <legend>顏色預設</legend>
+          <div>
+            <label>顏色預設</label>
             <div class="presets" id="presets"></div>
-          </fieldset>
+          </div>
 
           <div class="field">
             <div class="row">
@@ -216,39 +199,37 @@
             <input id="size" type="range" min="160" max="800" step="10" value="300" />
           </div>
 
-          <fieldset>
-            <legend>錯誤修正</legend>
-            <div class="ecc" role="radiogroup">
+          <div>
+            <label>錯誤修正</label>
+            <div class="ecc">
               <label class="ecc-opt"><input type="radio" name="ecc" value="L" /><span>低</span><small>L</small></label>
               <label class="ecc-opt"><input type="radio" name="ecc" value="M" checked /><span>中</span><small>M</small></label>
               <label class="ecc-opt"><input type="radio" name="ecc" value="Q" /><span>高</span><small>Q</small></label>
               <label class="ecc-opt"><input type="radio" name="ecc" value="H" /><span>最高</span><small>H</small></label>
             </div>
             <p class="hint">放中間圖片時建議使用「高」或「最高」。</p>
-          </fieldset>
+          </div>
 
-          <fieldset>
-            <legend>模組樣式</legend>
+          <div>
+            <label>模組樣式</label>
             <div class="style-grid">
-              <label class="style-opt active"><input type="radio" name="style" value="square" checked />方塊</label>
-              <label class="style-opt"><input type="radio" name="style" value="rounded" />圓角方塊</label>
+              <label class="style-opt"><input type="radio" name="style" value="square" checked />方塊</label>
+              <label class="style-opt"><input type="radio" name="style" value="rounded" />圓角</label>
               <label class="style-opt"><input type="radio" name="style" value="dots" />圓點</label>
             </div>
-            <p class="hint">目前提供三種穩定樣式，確保中文編碼正確。</p>
-          </fieldset>
+          </div>
 
           <div class="field">
             <label>中間圖片（可選）</label>
             <div class="img-row">
-              <img id="img-preview" class="img-preview" alt="中間圖預覽" />
-              <button type="button" class="btn btn-ghost" id="btn-img" style="flex:0 0 auto; min-width:7rem;">選擇圖片</button>
-              <button type="button" class="btn btn-ghost" id="btn-clear-img" style="flex:0 0 auto;" disabled>清除</button>
+              <img id="img-preview" class="img-preview" alt="" />
+              <button type="button" class="btn btn-ghost" id="btn-img">選擇圖片</button>
+              <button type="button" class="btn btn-ghost" id="btn-clear-img" disabled>清除</button>
               <input type="file" id="img-input" accept="image/*" hidden />
             </div>
-            <p class="hint">建議使用簡單圖示。有圖片時會自動提高錯誤修正等級。</p>
           </div>
 
-          <p class="alert warn" id="contrast-warn" hidden>前景與背景對比偏低，掃描器可能讀不到。</p>
+          <p class="alert warn" id="contrast-warn" hidden>前景與背景對比偏低。</p>
           <p class="alert err" id="error" hidden></p>
         </div>
       </section>
@@ -258,24 +239,22 @@
           <h2>即時預覽</h2>
           <p class="count" id="dim">—</p>
         </div>
-        <div class="stage" id="stage">
-          <canvas id="qr" style="display:none;"></canvas>
-          <p class="empty" id="empty">輸入文字或網址後，QR 碼會顯示在這裡。</p>
+        <div class="stage">
+          <canvas id="qr" width="300" height="300" style="display:none"></canvas>
+          <p class="empty" id="empty">輸入文字後會顯示 QR 碼</p>
         </div>
-        <div class="actions btn-row">
-          <button class="btn btn-primary" id="download" type="button" disabled>下載 PNG</button>
+        <div class="actions">
+          <button class="btn btn-primary" id="download" disabled style="width:100%">下載 PNG</button>
         </div>
-        <p class="hint" style="margin-top:12px">純前端運作，完整支援中文編碼。</p>
+        <p class="hint" style="margin-top:12px">純前端 · 完整支援中文</p>
       </section>
     </main>
-
-    <footer>方印工房 · 純前端 QR 工具</footer>
+    <footer>方印工房</footer>
   </div>
 
-  <!-- 使用對中文支援良好的 qrcode 函式庫 -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script>
-    (function () {
+    (function() {
       const PRESETS = [
         { name: "墨紙", fg: "#1c1915", bg: "#ffffff" },
         { name: "經典", fg: "#000000", bg: "#ffffff" },
@@ -283,153 +262,119 @@
         { name: "松青", fg: "#1e3d36", bg: "#f3f6f4" }
       ];
 
-      const contentEl = document.getElementById("content");
-      const countEl = document.getElementById("count");
-      const fgEl = document.getElementById("fg");
-      const bgEl = document.getElementById("bg");
-      const fgHex = document.getElementById("fg-hex");
-      const bgHex = document.getElementById("bg-hex");
-      const sizeEl = document.getElementById("size");
-      const sizeLabel = document.getElementById("size-label");
-      const downloadBtn = document.getElementById("download");
-      const emptyEl = document.getElementById("empty");
-      const dimEl = document.getElementById("dim");
-      const errorEl = document.getElementById("error");
-      const warnEl = document.getElementById("contrast-warn");
-      const canvas = document.getElementById("qr");
-      const imgInput = document.getElementById("img-input");
-      const imgPreview = document.getElementById("img-preview");
-      const btnImg = document.getElementById("btn-img");
-      const btnClearImg = document.getElementById("btn-clear-img");
-      const presetsEl = document.getElementById("presets");
+      const $ = id => document.getElementById(id);
+      const contentEl = $("content");
+      const countEl = $("count");
+      const fgEl = $("fg");
+      const bgEl = $("bg");
+      const fgHex = $("fg-hex");
+      const bgHex = $("bg-hex");
+      const sizeEl = $("size");
+      const sizeLabel = $("size-label");
+      const canvas = $("qr");
+      const emptyEl = $("empty");
+      const downloadBtn = $("download");
+      const dimEl = $("dim");
+      const errorEl = $("error");
+      const warnEl = $("contrast-warn");
+      const imgInput = $("img-input");
+      const imgPreview = $("img-preview");
+      const btnImg = $("btn-img");
+      const btnClearImg = $("btn-clear-img");
+      const presetsEl = $("presets");
 
-      let centerImage = null; // Image object or null
-      let centerImageUrl = null;
+      let centerImg = null;
 
       PRESETS.forEach(p => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "chip";
-        const dot = document.createElement("span");
-        dot.className = "dot";
-        dot.style.background = p.fg;
-        dot.style.boxShadow = "inset 0 0 0 3px " + p.bg;
-        btn.appendChild(dot);
-        btn.appendChild(document.createTextNode(p.name));
-        btn.addEventListener("click", () => {
-          fgEl.value = p.fg; bgEl.value = p.bg;
-          fgHex.value = p.fg; bgHex.value = p.bg;
-          document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "false"));
-          btn.setAttribute("aria-pressed", "true");
+        btn.innerHTML = `<span class="dot" style="background:${p.fg};box-shadow:inset 0 0 0 3px ${p.bg}"></span>${p.name}`;
+        btn.onclick = () => {
+          fgEl.value = fgHex.value = p.fg;
+          bgEl.value = bgHex.value = p.bg;
           render();
-        });
+        };
         presetsEl.appendChild(btn);
       });
 
-      function getSelected(name) {
+      function getRadio(name) {
         const el = document.querySelector(`input[name="${name}"]:checked`);
         return el ? el.value : null;
       }
 
-      function luminance(hex) {
-        const c = hex.replace("#", "");
-        const r = parseInt(c.substring(0,2), 16) / 255;
-        const g = parseInt(c.substring(2,4), 16) / 255;
-        const b = parseInt(c.substring(4,6), 16) / 255;
-        const toLin = v => v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
-        return 0.2126*toLin(r) + 0.7152*toLin(g) + 0.0722*toLin(b);
-      }
-
-      function contrastRatio(fg, bg) {
-        const L1 = luminance(fg), L2 = luminance(bg);
-        return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
-      }
-
-      function roundedRect(ctx, x, y, w, h, r) {
-        if (r > w/2) r = w/2;
-        if (r > h/2) r = h/2;
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
-      }
-
       function render() {
-        const text = contentEl.value; // keep original, including spaces
+        const text = contentEl.value;
         countEl.textContent = text.length + " 字";
-        sizeLabel.textContent = sizeEl.value + " px";
+        const size = parseInt(sizeEl.value, 10) || 300;
+        sizeLabel.textContent = size + " px";
 
         if (!text.trim()) {
           canvas.style.display = "none";
-          emptyEl.hidden = false;
+          emptyEl.style.display = "block";
           downloadBtn.disabled = true;
           dimEl.textContent = "—";
           errorEl.hidden = true;
           return;
         }
 
-        emptyEl.hidden = true;
+        emptyEl.style.display = "none";
         errorEl.hidden = true;
 
-        const size = parseInt(sizeEl.value, 10);
+        let ecc = getRadio("ecc") || "M";
+        if (centerImg && (ecc === "L" || ecc === "M")) ecc = "H";
+
         const fg = fgEl.value;
         const bg = bgEl.value;
-        let ecc = getSelected("ecc") || "M";
-        const style = getSelected("style") || "square";
 
-        if (centerImage && (ecc === "L" || ecc === "M")) {
-          ecc = "H"; // force higher when image present
+        // contrast check
+        function lum(hex) {
+          const c = parseInt(hex.slice(1), 16);
+          const r = ((c >> 16) & 255) / 255, g = ((c >> 8) & 255) / 255, b = (c & 255) / 255;
+          const f = v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+          return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
         }
-
-        const ratio = contrastRatio(fg, bg);
+        const ratio = (Math.max(lum(fg), lum(bg)) + 0.05) / (Math.min(lum(fg), lum(bg)) + 0.05);
         warnEl.hidden = ratio >= 3;
 
-        // Use the reliable qrcode library (handles UTF-8 / Chinese correctly)
+        // Important: set canvas size before calling the library
+        canvas.width = size;
+        canvas.height = size;
+
         QRCode.toCanvas(canvas, text, {
           width: size,
           margin: 2,
-          color: {
-            dark: fg,
-            light: bg
-          },
+          color: { dark: fg, light: bg },
           errorCorrectionLevel: ecc
-        }, function (err) {
+        }, function(err) {
           if (err) {
             console.error(err);
-            errorEl.textContent = "產生失敗：" + (err.message || err);
+            errorEl.textContent = "產生失敗: " + (err.message || String(err));
             errorEl.hidden = false;
-            downloadBtn.disabled = true;
             canvas.style.display = "none";
+            emptyEl.style.display = "block";
+            downloadBtn.disabled = true;
             return;
           }
 
-          // Post-process for module style + center image
-          const ctx = canvas.getContext("2d");
-          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const data = imgData.data;
-          const moduleCount = Math.round((size - 4*2) / ((size - 4*2) / Math.sqrt(data.length/4 / ((size/ (size - 8))**2 )))); // approximate
-
-          // Simple style processing for rounded / dots
-          // For accuracy we re-draw based on detected modules if needed, but for stability we keep base and only overlay image + light style
-          if (style === "rounded" || style === "dots") {
-            // Light post-process: we leave the base QR (correct encoding) and only apply center image.
-            // Full module re-shaping while preserving exact modules is complex; prioritise correct Chinese.
-          }
-
-          // Draw center image if present
-          if (centerImage && centerImage.complete) {
-            const imgSize = Math.floor(size * 0.28);
+          // Center image overlay
+          if (centerImg && centerImg.complete && centerImg.naturalWidth > 0) {
+            const ctx = canvas.getContext("2d");
+            const imgSize = Math.floor(size * 0.26);
             const x = (size - imgSize) / 2;
             const y = (size - imgSize) / 2;
-            // white background under image for better readability
+            const pad = 8;
             ctx.fillStyle = bg;
-            const pad = 6;
-            roundedRect(ctx, x - pad, y - pad, imgSize + pad*2, imgSize + pad*2, 8);
+            ctx.beginPath();
+            const r = 10;
+            ctx.moveTo(x - pad + r, y - pad);
+            ctx.arcTo(x - pad + imgSize + pad * 2, y - pad, x - pad + imgSize + pad * 2, y - pad + imgSize + pad * 2, r);
+            ctx.arcTo(x - pad + imgSize + pad * 2, y - pad + imgSize + pad * 2, x - pad, y - pad + imgSize + pad * 2, r);
+            ctx.arcTo(x - pad, y - pad + imgSize + pad * 2, x - pad, y - pad, r);
+            ctx.arcTo(x - pad, y - pad, x - pad + imgSize + pad * 2, y - pad, r);
+            ctx.closePath();
             ctx.fill();
-            ctx.drawImage(centerImage, x, y, imgSize, imgSize);
+            ctx.drawImage(centerImg, x, y, imgSize, imgSize);
           }
 
           canvas.style.display = "block";
@@ -442,55 +387,42 @@
       sizeEl.addEventListener("input", render);
       fgEl.addEventListener("input", () => { fgHex.value = fgEl.value; render(); });
       bgEl.addEventListener("input", () => { bgHex.value = bgEl.value; render(); });
-      fgHex.addEventListener("change", () => {
-        if (/^#[0-9a-fA-F]{6}$/.test(fgHex.value)) { fgEl.value = fgHex.value; render(); }
-      });
-      bgHex.addEventListener("change", () => {
-        if (/^#[0-9a-fA-F]{6}$/.test(bgHex.value)) { bgEl.value = bgHex.value; render(); }
-      });
-      document.querySelectorAll('input[name="ecc"], input[name="style"]').forEach(el => {
-        el.addEventListener("change", () => {
-          document.querySelectorAll(".style-opt").forEach(l => l.classList.remove("active"));
-          const checked = document.querySelector('input[name="style"]:checked');
-          if (checked) checked.closest(".style-opt").classList.add("active");
-          render();
-        });
-      });
+      fgHex.addEventListener("change", () => { if (/^#[0-9a-fA-F]{6}$/.test(fgHex.value)) { fgEl.value = fgHex.value; render(); } });
+      bgHex.addEventListener("change", () => { if (/^#[0-9a-fA-F]{6}$/.test(bgHex.value)) { bgEl.value = bgHex.value; render(); } });
+      document.querySelectorAll('input[name="ecc"], input[name="style"]').forEach(el => el.addEventListener("change", render));
 
-      btnImg.addEventListener("click", () => imgInput.click());
-      imgInput.addEventListener("change", (e) => {
-        const file = e.target.files && e.target.files[0];
+      btnImg.onclick = () => imgInput.click();
+      imgInput.onchange = e => {
+        const file = e.target.files[0];
         if (!file) return;
         const url = URL.createObjectURL(file);
         const img = new Image();
         img.onload = () => {
-          centerImage = img;
-          centerImageUrl = url;
+          centerImg = img;
           imgPreview.src = url;
           imgPreview.classList.add("show");
           btnClearImg.disabled = false;
           render();
         };
         img.src = url;
-      });
-      btnClearImg.addEventListener("click", () => {
-        centerImage = null;
-        if (centerImageUrl) URL.revokeObjectURL(centerImageUrl);
-        centerImageUrl = null;
+      };
+      btnClearImg.onclick = () => {
+        centerImg = null;
         imgPreview.src = "";
         imgPreview.classList.remove("show");
         btnClearImg.disabled = true;
         imgInput.value = "";
         render();
-      });
+      };
 
-      downloadBtn.addEventListener("click", () => {
-        const link = document.createElement("a");
-        link.download = "qrcode.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      });
+      downloadBtn.onclick = () => {
+        const a = document.createElement("a");
+        a.download = "qrcode.png";
+        a.href = canvas.toDataURL("image/png");
+        a.click();
+      };
 
+      // initial
       render();
     })();
   </script>
