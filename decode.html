@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>即時 QR 解碼 · 方印工房</title>
+  <style>
+    :root {
+      --bg: #f2efe6;
+      --surface: #faf8f3;
+      --surface-2: #ebe6da;
+      --fg: #1c1915;
+      --muted: #6e6860;
+      --subtle: #938c82;
+      --border: #ddd6c8;
+      --danger: #8f2d20;
+      --warn: #8a5a18;
+      --success: #2d6a4f;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow: 0 0 0 1px rgba(28,25,21,.06), 0 1px 2px -1px rgba(28,25,21,.06), 0 2px 8px 0 rgba(28,25,21,.04);
+      --font: "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      --display: Georgia, "Iowan Old Style", "Songti TC", serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--fg); }
+    body {
+      font-family: var(--font);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        linear-gradient(to right, rgba(28,25,21,.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(28,25,21,.035) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+    .wrap { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem 2.5rem; }
+    @media (min-width: 768px) { .wrap { padding: 2.5rem 2rem; } }
+    header { display: flex; flex-direction: column; gap: 1rem; }
+    @media (min-width: 640px) {
+      header { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+    }
+    .brand { display: flex; gap: .75rem; align-items: flex-start; }
+    .mark { width: 2rem; height: 2rem; }
+    .kicker { margin: 0; font-size: .875rem; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
+    h1 { margin: 0; font-family: var(--display); font-size: clamp(1.75rem, 1.2rem + 2vw, 2.25rem); font-weight: 500; letter-spacing: -.03em; line-height: 1.15; }
+    .lede { margin: 0; max-width: 24rem; font-size: .875rem; color: var(--muted); }
+    nav.tabs {
+      display: flex; gap: .5rem; margin-top: 1.25rem; flex-wrap: wrap;
+    }
+    nav.tabs a {
+      display: inline-flex; align-items: center; height: 2.25rem; padding: 0 .9rem;
+      border-radius: 999px; font-size: .875rem; font-weight: 500; text-decoration: none;
+      color: var(--muted); border: 1px solid transparent; background: transparent;
+      transition: all .15s ease;
+    }
+    nav.tabs a:hover { color: var(--fg); background: var(--surface-2); }
+    nav.tabs a.active {
+      color: var(--fg); background: var(--surface); border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+    main { margin-top: 2rem; display: grid; gap: 1.5rem; }
+    @media (min-width: 900px) { main { grid-template-columns: 1fr 1fr; align-items: start; } }
+    .card {
+      background: var(--surface); border-radius: var(--radius-xl); padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    h2 { margin: 0 0 1rem; font-family: var(--display); font-size: 1.25rem; font-weight: 500; }
+    .hint { margin: .5rem 0 0; font-size: .875rem; color: var(--muted); }
+    .stack { display: flex; flex-direction: column; gap: 1rem; }
+    .field { display: flex; flex-direction: column; gap: .5rem; }
+    label { font-size: .875rem; font-weight: 500; }
+    .btn {
+      height: 2.75rem; border: 0; border-radius: 8px; font: inherit; font-size: .875rem; font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: 0 1rem;
+    }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-primary { background: var(--fg); color: var(--surface); }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+    .btn-ghost {
+      background: var(--surface); color: var(--fg); border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--surface-2); }
+    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; }
+    #reader {
+      width: 100%; min-height: 280px; border-radius: var(--radius-lg); overflow: hidden;
+      background: var(--surface-2); border: 1px dashed var(--border);
+    }
+    #reader video { border-radius: var(--radius-lg); }
+    .dropzone {
+      border: 2px dashed var(--border); border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem; text-align: center; background: var(--surface-2);
+      transition: border-color .15s, background .15s; cursor: pointer;
+    }
+    .dropzone.dragover { border-color: var(--fg); background: #e8e2d4; }
+    .dropzone p { margin: 0; color: var(--muted); font-size: .9rem; }
+    .dropzone strong { color: var(--fg); }
+    input[type="file"] { display: none; }
+    .result-box {
+      margin-top: 1rem; padding: 1rem 1.1rem; border-radius: var(--radius-lg);
+      background: var(--surface-2); border: 1px solid var(--border);
+      word-break: break-all; font-size: .95rem; line-height: 1.55;
+      min-height: 3.5rem; white-space: pre-wrap;
+    }
+    .result-box.empty { color: var(--subtle); }
+    .result-box.success { border-color: #a3c4b0; background: #f0f7f2; }
+    .result-box.error { border-color: #e0b4ad; background: #fdf2f0; color: var(--danger); }
+    .meta { font-size: .8rem; color: var(--muted); margin-top: .5rem; }
+    .status {
+      font-size: .875rem; color: var(--muted); min-height: 1.4em;
+    }
+    .status.ok { color: var(--success); }
+    .status.err { color: var(--danger); }
+    footer {
+      margin-top: 2.5rem; text-align: center; font-size: .8rem; color: var(--subtle);
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#ebe6da"/>
+          <path fill="#1c1915" d="M6 6h8v2H8v6H6V6zm12 0h8v8h-2V8h-6V6zM6 18h2v6h6v2H6v-8zm18 6h-6v2h8v-8h-2v6zM14 14h4v4h-4z"/>
+        </svg>
+        <div>
+          <p class="kicker">方印工房</p>
+          <h1>即時 QR 解碼</h1>
+        </div>
+      </div>
+      <p class="lede">上傳圖片或開啟相機掃描 QR 碼，解碼結果即時顯示。純前端運作，資料不會離開你的裝置。</p>
+    </header>
+
+    <nav class="tabs" aria-label="功能切換">
+      <a href="index.html">生成</a>
+      <a href="decode.html" class="active" aria-current="page">解碼</a>
+    </nav>
+
+    <main>
+      <!-- 相機掃描 -->
+      <section class="card">
+        <h2>相機掃描</h2>
+        <div class="stack">
+          <div id="reader"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-primary" id="btn-start-cam">開啟相機</button>
+            <button type="button" class="btn btn-ghost" id="btn-stop-cam" disabled>停止</button>
+          </div>
+          <p class="status" id="cam-status">尚未啟動相機</p>
+          <p class="hint">建議在光線充足處使用。行動裝置請允許相機權限。</p>
+        </div>
+      </section>
+
+      <!-- 上傳圖片 -->
+      <section class="card">
+        <h2>上傳圖片解碼</h2>
+        <div class="stack">
+          <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="選擇或拖放 QR 圖片">
+            <p><strong>點擊選擇</strong> 或拖放圖片到此處</p>
+            <p class="hint" style="margin-top:.4rem">支援 PNG、JPG、WebP、GIF</p>
+          </div>
+          <input type="file" id="file-input" accept="image/*" />
+          <p class="status" id="file-status"></p>
+        </div>
+      </section>
+    </main>
+
+    <!-- 結果區（跨兩欄） -->
+    <section class="card" style="margin-top:1.5rem">
+      <h2>解碼結果</h2>
+      <div class="result-box empty" id="result" aria-live="polite">尚未解碼任何內容</div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button type="button" class="btn btn-primary" id="btn-copy" disabled>複製結果</button>
+        <button type="button" class="btn btn-ghost" id="btn-clear" disabled>清除</button>
+      </div>
+      <p class="meta" id="result-meta"></p>
+    </section>
+
+    <footer>
+      方印工房 · 純前端 QR 工具 · 資料僅在本機處理
+    </footer>
+  </div>
+
+  <!-- html5-qrcode via CDN -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script>
+    (function () {
+      const resultEl = document.getElementById("result");
+      const resultMeta = document.getElementById("result-meta");
+      const btnCopy = document.getElementById("btn-copy");
+      const btnClear = document.getElementById("btn-clear");
+      const camStatus = document.getElementById("cam-status");
+      const fileStatus = document.getElementById("file-status");
+      const btnStart = document.getElementById("btn-start-cam");
+      const btnStop = document.getElementById("btn-stop-cam");
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("file-input");
+
+      let html5QrCode = null;
+      let lastResult = "";
+
+      function showResult(text, source) {
+        lastResult = text || "";
+        resultEl.textContent = text || "尚未解碼任何內容";
+        resultEl.classList.remove("empty", "success", "error");
+        if (text) {
+          resultEl.classList.add("success");
+          btnCopy.disabled = false;
+          btnClear.disabled = false;
+          resultMeta.textContent = source ? "來源：" + source + " · " + new Date().toLocaleTimeString("zh-Hant") : "";
+        } else {
+          resultEl.classList.add("empty");
+          btnCopy.disabled = true;
+          btnClear.disabled = true;
+          resultMeta.textContent = "";
+        }
+      }
+
+      function showError(msg) {
+        resultEl.textContent = msg;
+        resultEl.classList.remove("empty", "success");
+        resultEl.classList.add("error");
+        btnCopy.disabled = true;
+        btnClear.disabled = false;
+        resultMeta.textContent = "";
+      }
+
+      // Camera
+      btnStart.addEventListener("click", async () => {
+        if (html5QrCode && html5QrCode.isScanning) return;
+        camStatus.textContent = "正在請求相機權限…";
+        camStatus.className = "status";
+        try {
+          html5QrCode = new Html5Qrcode("reader");
+          const cameras = await Html5Qrcode.getCameras();
+          if (!cameras || cameras.length === 0) {
+            camStatus.textContent = "找不到可用相機";
+            camStatus.className = "status err";
+            return;
+          }
+          // Prefer back camera if available
+          let cameraId = cameras[0].id;
+          for (const c of cameras) {
+            if (/back|rear|environment/i.test(c.label)) {
+              cameraId = c.id;
+              break;
+            }
+          }
+          await html5QrCode.start(
+            cameraId,
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => {
+              showResult(decodedText, "相機掃描");
+              camStatus.textContent = "已成功解碼";
+              camStatus.className = "status ok";
+              // Optional: stop after first success
+              // stopCamera();
+            },
+            () => {} // ignore continuous fail
+          );
+          btnStart.disabled = true;
+          btnStop.disabled = false;
+          camStatus.textContent = "相機運行中，請對準 QR 碼";
+          camStatus.className = "status ok";
+        } catch (err) {
+          console.error(err);
+          camStatus.textContent = "無法啟動相機：" + (err.message || err);
+          camStatus.className = "status err";
+        }
+      });
+
+      function stopCamera() {
+        if (html5QrCode) {
+          html5QrCode.stop().then(() => {
+            html5QrCode.clear();
+            html5QrCode = null;
+            btnStart.disabled = false;
+            btnStop.disabled = true;
+            camStatus.textContent = "相機已停止";
+            camStatus.className = "status";
+          }).catch((err) => {
+            console.error(err);
+            camStatus.textContent = "停止失敗：" + err;
+            camStatus.className = "status err";
+          });
+        }
+      }
+      btnStop.addEventListener("click", stopCamera);
+
+      // File upload
+      function handleFile(file) {
+        if (!file || !file.type.startsWith("image/")) {
+          fileStatus.textContent = "請選擇圖片檔案";
+          fileStatus.className = "status err";
+          return;
+        }
+        fileStatus.textContent = "解碼中…";
+        fileStatus.className = "status";
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            // Use html5-qrcode file scan
+            if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.scanFile(file, true)
+              .then((decodedText) => {
+                showResult(decodedText, "上傳圖片");
+                fileStatus.textContent = "解碼成功";
+                fileStatus.className = "status ok";
+              })
+              .catch((err) => {
+                console.error(err);
+                showError("無法從此圖片解碼 QR 碼。請確認圖片清晰且包含完整 QR。");
+                fileStatus.textContent = "解碼失敗";
+                fileStatus.className = "status err";
+              });
+          };
+          img.onerror = () => {
+            fileStatus.textContent = "無法讀取圖片";
+            fileStatus.className = "status err";
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      dropzone.addEventListener("click", () => fileInput.click());
+      dropzone.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
+      });
+
+      // Drag & drop
+      ["dragenter", "dragover"].forEach((ev) => {
+        dropzone.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropzone.classList.add("dragover");
+        });
+      });
+      ["dragleave", "drop"].forEach((ev) => {
+        dropzone.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropzone.classList.remove("dragover");
+        });
+      });
+      dropzone.addEventListener("drop", (e) => {
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file);
+      });
+
+      // Copy & Clear
+      btnCopy.addEventListener("click", async () => {
+        if (!lastResult) return;
+        try {
+          await navigator.clipboard.writeText(lastResult);
+          btnCopy.textContent = "已複製";
+          setTimeout(() => { btnCopy.textContent = "複製結果"; }, 1500);
+        } catch {
+          // fallback
+          const ta = document.createElement("textarea");
+          ta.value = lastResult;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+          btnCopy.textContent = "已複製";
+          setTimeout(() => { btnCopy.textContent = "複製結果"; }, 1500);
+        }
+      });
+
+      btnClear.addEventListener("click", () => {
+        showResult("");
+        fileStatus.textContent = "";
+        fileStatus.className = "status";
+      });
+    })();
+  </script>
+</body>
+</html>
