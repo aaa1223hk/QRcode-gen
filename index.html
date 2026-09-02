@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="light dark" />
   <title>即時 QR</title>
   <style>
     :root {
@@ -22,6 +22,48 @@
       --font: "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
       --display: Georgia, "Iowan Old Style", "Songti TC", serif;
     }
+    [data-theme="dark"] {
+      --bg: #141210;
+      --surface: #1e1b17;
+      --surface-2: #2a2520;
+      --fg: #f2efe6;
+      --muted: #a8a29a;
+      --subtle: #78716c;
+      --border: #3f3a32;
+      --danger: #f87171;
+      --warn: #fbbf24;
+      --shadow: 0 0 0 1px rgba(242,239,230,.06), 0 1px 2px -1px rgba(0,0,0,.3), 0 2px 8px 0 rgba(0,0,0,.25);
+    }
+    [data-theme="dark"] body {
+      background-image:
+        linear-gradient(to right, rgba(242,239,230,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(242,239,230,.04) 1px, transparent 1px);
+    }
+    .top-bar {
+      display: flex; justify-content: flex-end; align-items: center; gap: .75rem;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .lang-switch {
+      display: inline-flex; border: 1px solid var(--border); border-radius: 999px;
+      overflow: hidden; background: var(--surface); box-shadow: var(--shadow);
+    }
+    .lang-btn {
+      border: 0; background: transparent; color: var(--muted); font: inherit;
+      font-size: .8125rem; font-weight: 500; height: 2rem; padding: 0 .7rem;
+      cursor: pointer;
+    }
+    .lang-btn:hover { color: var(--fg); background: var(--surface-2); }
+    .lang-btn.active {
+      color: var(--fg); background: var(--surface-2); font-weight: 600;
+    }
+    .theme-btn {
+      width: 2.25rem; height: 2.25rem; border: 1px solid var(--border);
+      border-radius: 999px; background: var(--surface); color: var(--fg);
+      font-size: 1rem; display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow); cursor: pointer;
+    }
+    .theme-btn:hover { background: var(--surface-2); }
+
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--fg); }
     body {
@@ -151,6 +193,14 @@
 </head>
 <body>
   <div class="wrap">
+    <div class="top-bar">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" class="lang-btn active" data-lang="zh" aria-pressed="true">中</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        <button type="button" class="lang-btn" data-lang="ja" aria-pressed="false">日</button>
+      </div>
+      <button type="button" class="theme-btn" id="theme-toggle" aria-label="Toggle dark / light theme" title="Theme">🌙</button>
+    </div>
     <header>
       <div class="brand">
         <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
@@ -158,15 +208,15 @@
           <path fill="#1c1915" d="M6 6h8v2H8v6H6V6zm12 0h8v8h-2V8h-6V6zM6 18h2v6h6v2H6v-8zm18 6h-6v2h8v-8h-2v6zM14 14h4v4h-4z"/>
         </svg>
         <div>
-          <p class="kicker">方印工房</p>
-          <h1>即時 QR 生成</h1>
+          <p class="kicker" data-i18n="kicker">方印工房</p>
+          <h1 data-i18n="title">即時 QR 生成</h1>
         </div>
       </div>
-      <p class="lede">輸入網址或文字，即時預覽、調色、調整尺寸，然後下載 PNG。不必安裝任何程式。</p>
+      <p class="lede" data-i18n="lede">輸入網址或文字，<span data-i18n="preview-heading">即時預覽</span>、調色、調整尺寸，然後<span data-i18n="btn-download">下載 PNG</span>。不必安裝任何程式。</p>
     </header>
     <nav class="tabs" aria-label="功能切換">
-      <a href="index.html" class="active" aria-current="page">生成</a>
-      <a href="decode.html">解碼</a>
+      <a href="index.html" class="active" aria-current="page" data-i18n="tab-gen">生成</a>
+      <a href="decode.html" data-i18n="tab-decode">解碼</a>
     </nav>
 
     <main>
@@ -175,22 +225,22 @@
         <div class="stack">
           <div class="field">
             <div class="row">
-              <label for="content">內容</label>
+              <label for="content" data-i18n="label-content">內容</label>
               <span class="count" id="count">0 字</span>
             </div>
             <textarea id="content" placeholder="https:// 或任何文字" aria-describedby="content-hint" spellcheck="false" autocomplete="off"></textarea>
-            <p class="hint" id="content-hint">網址、名片資訊或任何想編碼的內容，輸入後會立即更新預覽。</p>
+            <p class="hint" id="content-hint"><span data-i18n="hint-content">網址、名片資訊或任何想編碼的內容，輸入後會立即更新預覽。</span></p>
           </div>
           <div class="colors">
             <div class="field">
-              <label for="fg">前景色</label>
+              <label for="fg" data-i18n="label-fg">前景色</label>
               <div class="swatch-row">
                 <input id="fg" type="color" value="#1c1915" />
                 <input id="fg-hex" type="text" value="#1c1915" aria-label="前景色色碼" spellcheck="false" autocapitalize="off" />
               </div>
             </div>
             <div class="field">
-              <label for="bg">背景色</label>
+              <label for="bg" data-i18n="label-bg">背景色</label>
               <div class="swatch-row">
                 <input id="bg" type="color" value="#ffffff" />
                 <input id="bg-hex" type="text" value="#ffffff" aria-label="背景色色碼" spellcheck="false" autocapitalize="off" />
@@ -198,39 +248,39 @@
             </div>
           </div>
           <fieldset>
-            <legend>顏色預設</legend>
+            <legend><span data-i18n="presets">顏色預設</span></legend>
             <div class="presets" id="presets"></div>
           </fieldset>
           <div class="field">
             <div class="row">
-              <label for="size">尺寸</label>
+              <label for="size" data-i18n="label-size">尺寸</label>
               <span class="count" id="size-label">280 px</span>
             </div>
             <input id="size" type="range" min="128" max="1024" step="8" value="280" aria-valuetext="280 像素" />
-            <p class="hint">預覽會等比縮放；下載的 PNG 為上方設定的實際像素。</p>
+            <p class="hint"><span data-i18n="hint-size">預覽會等比縮放；下載的 PNG 為上方設定的實際像素。</span></p>
           </div>
           <fieldset>
-            <legend id="ecc-legend">錯誤修正</legend>
+            <legend id="ecc-legend"><span data-i18n="ecc-legend">錯誤修正</span></legend>
             <div class="ecc" role="radiogroup" aria-labelledby="ecc-legend">
-              <label class="ecc-opt"><input type="radio" name="ecc" value="L" /><span>低</span><small>L</small></label>
-              <label class="ecc-opt"><input type="radio" name="ecc" value="M" checked /><span>中</span><small>M</small></label>
-              <label class="ecc-opt"><input type="radio" name="ecc" value="Q" /><span>高</span><small>Q</small></label>
-              <label class="ecc-opt"><input type="radio" name="ecc" value="H" /><span>最高</span><small>H</small></label>
+              <label class="ecc-opt"><input type="radio" name="ecc" value="L" /><span data-i18n="ecc-L">低</span><small>L</small></label>
+              <label class="ecc-opt"><input type="radio" name="ecc" value="M" checked /><span data-i18n="ecc-M">中</span><small>M</small></label>
+              <label class="ecc-opt"><input type="radio" name="ecc" value="Q" /><span data-i18n="ecc-Q">高</span><small>Q</small></label>
+              <label class="ecc-opt"><input type="radio" name="ecc" value="H" /><span data-i18n="ecc-H">最高</span><small>H</small></label>
             </div>
-            <p class="hint" id="ecc-hint">約可修復 15%。等級越高，即使部分遮擋仍可掃描，但圖樣更密。</p>
+            <p class="hint" id="ecc-hint"><span data-i18n="ecc-hint">約可修復 15%。等級越高，即使部分遮擋仍可掃描，但圖樣更密。</span></p>
           </fieldset>
 
           <div class="field" style="margin-top:1rem">
-            <label>中間圖片（可選）</label>
+            <label><span data-i18n="label-center">中間圖片（可選）</span></label>
             <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-top:.4rem">
               <img id="center-preview" style="width:52px;height:52px;border-radius:8px;border:1px solid var(--border);object-fit:contain;display:none;background:var(--surface-2)" alt="">
-              <button type="button" class="btn btn-ghost" id="btn-center-img" style="flex:0 0 auto;height:2.5rem;padding:0 .9rem">選擇圖片</button>
-              <button type="button" class="btn btn-ghost" id="btn-clear-center" style="flex:0 0 auto;height:2.5rem;padding:0 .9rem" disabled>清除</button>
+              <button type="button" class="btn btn-ghost" id="btn-center-img" style="flex:0 0 auto;height:2.5rem;padding:0 .9rem"><span data-i18n="btn-center">選擇圖片</span></button>
+              <button type="button" class="btn btn-ghost" id="btn-clear-center" style="flex:0 0 auto;height:2.5rem;padding:0 .9rem" disabled><span data-i18n="btn-clear">清除</span></button>
               <input type="file" id="center-input" accept="image/*" hidden>
             </div>
-            <p class="hint">建議使用簡單圖示。有圖片時會自動提高錯誤修正等級。</p>
+            <p class="hint"><span data-i18n="hint-center">建議使用簡單圖示。有圖片時會自動提高錯誤修正等級。</span></p>
           </div>
-          <p class="alert warn" id="contrast-warn" hidden>前景與背景對比偏低，掃描器可能讀不到。建議改用對比較高的配色。</p>
+          <p class="alert warn" id="contrast-warn" hidden><span data-i18n="warn-contrast">前景與背景對比偏低，掃描器可能讀不到。建議改用對比較高的配色。</span></p>
           <p class="alert err" id="error" hidden></p>
         </div>
       </section>
@@ -241,12 +291,12 @@
         </div>
         <div class="stage" id="stage">
           <canvas id="qr" hidden></canvas>
-          <p class="empty" id="empty">輸入文字或網址後，QR 碼會顯示在這裡。</p>
+          <p class="empty" id="empty"><span data-i18n="empty">輸入文字或網址後，QR 碼會顯示在這裡。</span></p>
         </div>
         <div class="actions">
           <button class="btn btn-primary" id="download" type="button" disabled>下載 PNG</button>
         </div>
-        <p class="hint" style="margin-top:12px">此頁面已是離線檔，可隨時雙擊開啟。</p>
+        <p class="hint" style="margin-top:12px"><span data-i18n="offline-hint">此頁面已是離線檔，可隨時雙擊開啟。</span></p>
         <p class="sr-only" id="status" role="status" aria-live="polite">請輸入內容以產生 QR 碼</p>
       </section>
     </main>
@@ -262,11 +312,151 @@ Minimum version required to store current data is: `+i+`.
 </script>
   <script>
     (function () {
+
+      // ===== Theme & i18n =====
+      var I18N = {
+        zh: {
+          "kicker": "方印工房",
+          "title": "即時 QR 生成",
+          "lede": "輸入網址或文字，即時預覽、調色、調整尺寸，然後下載 PNG。不必安裝任何程式。",
+          "tab-gen": "生成",
+          "tab-decode": "解碼",
+          "label-content": "內容",
+          "hint-content": "網址、名片資訊或任何想編碼的內容，輸入後會立即更新預覽。",
+          "label-fg": "前景色",
+          "label-bg": "背景色",
+          "presets": "顏色預設",
+          "label-size": "尺寸",
+          "hint-size": "預覽會等比縮放；下載的 PNG 為上方設定的實際像素。",
+          "ecc-legend": "錯誤修正",
+          "ecc-hint": "約可修復 15%。等級越高，即使部分遮擋仍可掃描，但圖樣更密。",
+          "ecc-L": "低", "ecc-M": "中", "ecc-Q": "高", "ecc-H": "最高",
+          "label-center": "中間圖片（可選）",
+          "btn-center": "選擇圖片",
+          "btn-clear": "清除",
+          "hint-center": "建議使用簡單圖示。有圖片時會自動提高錯誤修正等級。",
+          "warn-contrast": "前景與背景對比偏低，掃描器可能讀不到。建議改用對比較高的配色。",
+          "preview-heading": "即時預覽",
+          "empty": "輸入文字或網址後，QR 碼會顯示在這裡。",
+          "btn-download": "下載 PNG",
+          "offline-hint": "此頁面已是離線檔，可隨時雙擊開啟。",
+          "count-suffix": " 字",
+          "status-ready": "請輸入內容以產生 QR 碼",
+          "err-long": "內容過長，請縮短文字，或改用較低的錯誤修正等級。",
+          "err-generic": "無法產生 QR 碼，請檢查內容後再試。",
+          "preset-ink": "墨紙", "preset-classic": "經典", "preset-invert": "反白", "preset-pine": "松青"
+        },
+        en: {
+          "kicker": "Fangyin Studio",
+          "title": "Live QR Generator",
+          "lede": "Enter a URL or text, preview instantly, adjust colors & size, then download PNG. No install needed.",
+          "tab-gen": "Generate",
+          "tab-decode": "Decode",
+          "label-content": "Content",
+          "hint-content": "URL, contact info or any text. Preview updates immediately.",
+          "label-fg": "Foreground",
+          "label-bg": "Background",
+          "presets": "Color presets",
+          "label-size": "Size",
+          "hint-size": "Preview scales proportionally; downloaded PNG uses the pixel size set above.",
+          "ecc-legend": "Error correction",
+          "ecc-hint": "Recovers ~15%. Higher levels tolerate more damage but make the pattern denser.",
+          "ecc-L": "Low", "ecc-M": "Med", "ecc-Q": "High", "ecc-H": "Max",
+          "label-center": "Center image (optional)",
+          "btn-center": "Choose image",
+          "btn-clear": "Clear",
+          "hint-center": "Prefer simple icons. Error correction is raised automatically when an image is present.",
+          "warn-contrast": "Low contrast between foreground and background. Scanners may fail. Prefer higher contrast.",
+          "preview-heading": "Live preview",
+          "empty": "Enter text or a URL and the QR code will appear here.",
+          "btn-download": "Download PNG",
+          "offline-hint": "This page is fully offline — open it anytime by double-click.",
+          "count-suffix": " chars",
+          "status-ready": "Enter content to generate a QR code",
+          "err-long": "Content too long. Shorten the text or choose a lower error-correction level.",
+          "err-generic": "Unable to generate QR code. Please check the content.",
+          "preset-ink": "Ink", "preset-classic": "Classic", "preset-invert": "Invert", "preset-pine": "Pine"
+        },
+        ja: {
+          "kicker": "方印工房",
+          "title": "リアルタイム QR 生成",
+          "lede": "URL やテキストを入力すると即時プレビュー。色・サイズを調整して PNG をダウンロード。インストール不要。",
+          "tab-gen": "生成",
+          "tab-decode": "読取",
+          "label-content": "内容",
+          "hint-content": "URL・名刺情報・任意のテキスト。入力後すぐにプレビューが更新されます。",
+          "label-fg": "前景色",
+          "label-bg": "背景色",
+          "presets": "カラープリセット",
+          "label-size": "サイズ",
+          "hint-size": "プレビューは比例縮小されます。ダウンロード PNG は上で設定した実ピクセルです。",
+          "ecc-legend": "誤り訂正",
+          "ecc-hint": "約15%修復可能。等級が高いほど損傷に強いですが、模様が密になります。",
+          "ecc-L": "低", "ecc-M": "中", "ecc-Q": "高", "ecc-H": "最高",
+          "label-center": "中央画像（任意）",
+          "btn-center": "画像を選択",
+          "btn-clear": "クリア",
+          "hint-center": "シンプルなアイコン推奨。画像がある場合は誤り訂正レベルが自動で上がります。",
+          "warn-contrast": "前景と背景のコントラストが低いため、読み取れない可能性があります。",
+          "preview-heading": "リアルタイムプレビュー",
+          "empty": "テキストまたは URL を入力すると QR コードがここに表示されます。",
+          "btn-download": "PNG をダウンロード",
+          "offline-hint": "このページは完全オフライン対応。いつでもダブルクリックで開けます。",
+          "count-suffix": " 文字",
+          "status-ready": "内容を入力して QR コードを生成",
+          "err-long": "内容が長すぎます。テキストを短くするか、誤り訂正レベルを下げてください。",
+          "err-generic": "QRコードを生成できません。内容を確認してください。",
+          "preset-ink": "墨紙", "preset-classic": "クラシック", "preset-invert": "反転", "preset-pine": "松青"
+        }
+      };
+
+      function getLang() {
+        return localStorage.getItem("qr-lang") || "zh";
+      }
+      function setLang(lang) {
+        if (!I18N[lang]) lang = "zh";
+        localStorage.setItem("qr-lang", lang);
+        document.documentElement.lang = lang === "zh" ? "zh-Hant" : lang;
+        var dict = I18N[lang];
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          var key = el.getAttribute("data-i18n");
+          if (dict[key] != null) el.textContent = dict[key];
+        });
+        // update title
+        document.title = dict["title"] || "Live QR";
+        // update lang buttons
+        document.querySelectorAll(".lang-btn").forEach(function (btn) {
+          var active = btn.getAttribute("data-lang") === lang;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+        // update dynamic count suffix if needed
+        if (window._updateCount) window._updateCount();
+        // update ECC hint base
+        if (window._updateEccHint) window._updateEccHint();
+      }
+
+      function getTheme() {
+        return localStorage.getItem("qr-theme") || "light";
+      }
+      function setTheme(theme) {
+        if (theme !== "dark" && theme !== "light") theme = "light";
+        localStorage.setItem("qr-theme", theme);
+        document.documentElement.setAttribute("data-theme", theme);
+        var btn = document.getElementById("theme-toggle");
+        if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
+      }
+
+      // init early
+      setTheme(getTheme());
+      // lang applied after DOM ready, but we are already inside DOMContent essentially
+
+
       var PRESETS = [
-        { name: "墨紙", fg: "#1c1915", bg: "#ffffff" },
-        { name: "經典", fg: "#000000", bg: "#ffffff" },
-        { name: "反白", fg: "#faf8f3", bg: "#1c1915" },
-        { name: "松青", fg: "#1e3d36", bg: "#f3f6f4" }
+        { nameKey: "preset-ink", fg: "#1c1915", bg: "#ffffff" },
+        { nameKey: "preset-classic", fg: "#000000", bg: "#ffffff" },
+        { nameKey: "preset-invert", fg: "#faf8f3", bg: "#1c1915" },
+        { nameKey: "preset-pine", fg: "#1e3d36", bg: "#f3f6f4" }
       ];
       var HINTS = { L: "約可修復 7%", M: "約可修復 15%", Q: "約可修復 25%", H: "約可修復 30%" };
       var content = document.getElementById("content");
@@ -352,7 +542,10 @@ Minimum version required to store current data is: `+i+`.
         dot.style.background = preset.fg;
         dot.style.boxShadow = "inset 0 0 0 3px " + preset.bg;
         btn.appendChild(dot);
-        btn.appendChild(document.createTextNode(preset.name));
+        var nameSpan = document.createElement("span");
+        nameSpan.setAttribute("data-i18n", preset.nameKey);
+        nameSpan.textContent = (I18N[getLang()] || I18N.zh)[preset.nameKey] || preset.nameKey;
+        btn.appendChild(nameSpan);
         btn.addEventListener("click", function () {
           fg.value = preset.fg; bg.value = preset.bg;
           fgHex.value = preset.fg; bgHex.value = preset.bg;
@@ -369,11 +562,15 @@ Minimum version required to store current data is: `+i+`.
       }
       function render() {
         var text = content.value.trim();
-        count.textContent = text.length + " 字";
+        var dict = I18N[getLang()] || I18N.zh;
+        count.textContent = text.length + (dict["count-suffix"] || " 字");
         sizeLabel.textContent = size.value + " px";
-        size.setAttribute("aria-valuetext", size.value + " 像素");
+        size.setAttribute("aria-valuetext", size.value + " px");
         stage.style.background = bg.value;
-        eccHint.textContent = HINTS[ecc()] + "。等級越高，即使部分遮擋仍可掃描，但圖樣更密。";
+        var baseHint = dict["ecc-hint"] || "";
+        // keep simple: use the full translated hint, or append recovery rate
+        var recovery = { L: "7%", M: "15%", Q: "25%", H: "30%" };
+        eccHint.textContent = baseHint; // full translated already
         warnEl.hidden = contrast(fg.value, bg.value) >= 4.5;
         updatePresets();
         if (!text) {
@@ -383,7 +580,7 @@ Minimum version required to store current data is: `+i+`.
           ready = false;
           dim.textContent = "—";
           errorEl.hidden = true;
-          setStatus("請輸入內容以產生 QR 碼");
+          setStatus(dict["status-ready"] || "請輸入內容以產生 QR 碼");
           return;
         }
         var useEcc = ecc();
@@ -429,9 +626,10 @@ Minimum version required to store current data is: `+i+`.
           download.disabled = true;
           ready = false;
           dim.textContent = "—";
+          var dict = I18N[getLang()] || I18N.zh;
           var msg = err && /too big/i.test(String(err.message || err))
-            ? "內容過長，請縮短文字，或改用較低的錯誤修正等級。"
-            : "無法產生 QR 碼，請檢查內容後再試。";
+            ? (dict["err-long"] || "內容過長，請縮短文字，或改用較低的錯誤修正等級。")
+            : (dict["err-generic"] || "無法產生 QR 碼，請檢查內容後再試。");
           errorEl.hidden = false;
           errorEl.textContent = msg;
           setStatus(msg);
@@ -489,6 +687,20 @@ Minimum version required to store current data is: `+i+`.
           });
         }
       }
+
+      // Theme & language controls
+      document.getElementById("theme-toggle").addEventListener("click", function () {
+        setTheme(getTheme() === "dark" ? "light" : "dark");
+      });
+      document.querySelectorAll(".lang-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          setLang(btn.getAttribute("data-lang"));
+          render(); // refresh dynamic texts
+        });
+      });
+
+      // apply saved language
+      setLang(getLang());
 
       render();
     })();
