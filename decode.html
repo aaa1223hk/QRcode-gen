@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="light dark" />
   <title>即時 QR 解碼 · 方印工房</title>
   <style>
     :root {
@@ -23,6 +23,49 @@
       --font: "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
       --display: Georgia, "Iowan Old Style", "Songti TC", serif;
     }
+    [data-theme="dark"] {
+      --bg: #141210;
+      --surface: #1e1b17;
+      --surface-2: #2a2520;
+      --fg: #f2efe6;
+      --muted: #a8a29a;
+      --subtle: #78716c;
+      --border: #3f3a32;
+      --danger: #f87171;
+      --warn: #fbbf24;
+      --success: #4ade80;
+      --shadow: 0 0 0 1px rgba(242,239,230,.06), 0 1px 2px -1px rgba(0,0,0,.3), 0 2px 8px 0 rgba(0,0,0,.25);
+    }
+    [data-theme="dark"] body {
+      background-image:
+        linear-gradient(to right, rgba(242,239,230,.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(242,239,230,.04) 1px, transparent 1px);
+    }
+    .top-bar {
+      display: flex; justify-content: flex-end; align-items: center; gap: .75rem;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .lang-switch {
+      display: inline-flex; border: 1px solid var(--border); border-radius: 999px;
+      overflow: hidden; background: var(--surface); box-shadow: var(--shadow);
+    }
+    .lang-btn {
+      border: 0; background: transparent; color: var(--muted); font: inherit;
+      font-size: .8125rem; font-weight: 500; height: 2rem; padding: 0 .7rem;
+      cursor: pointer;
+    }
+    .lang-btn:hover { color: var(--fg); background: var(--surface-2); }
+    .lang-btn.active {
+      color: var(--fg); background: var(--surface-2); font-weight: 600;
+    }
+    .theme-btn {
+      width: 2.25rem; height: 2.25rem; border: 1px solid var(--border);
+      border-radius: 999px; background: var(--surface); color: var(--fg);
+      font-size: 1rem; display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow); cursor: pointer;
+    }
+    .theme-btn:hover { background: var(--surface-2); }
+
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--fg); }
     body {
@@ -124,6 +167,14 @@
 </head>
 <body>
   <div class="wrap">
+    <div class="top-bar">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" class="lang-btn active" data-lang="zh" aria-pressed="true">中</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+        <button type="button" class="lang-btn" data-lang="ja" aria-pressed="false">日</button>
+      </div>
+      <button type="button" class="theme-btn" id="theme-toggle" aria-label="Toggle dark / light theme" title="Theme">🌙</button>
+    </div>
     <header>
       <div class="brand">
         <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
@@ -131,40 +182,40 @@
           <path fill="#1c1915" d="M6 6h8v2H8v6H6V6zm12 0h8v8h-2V8h-6V6zM6 18h2v6h6v2H6v-8zm18 6h-6v2h8v-8h-2v6zM14 14h4v4h-4z"/>
         </svg>
         <div>
-          <p class="kicker">方印工房</p>
-          <h1>即時 QR 解碼</h1>
+          <p class="kicker" data-i18n="kicker">方印工房</p>
+          <h1 data-i18n="title">即時 QR 解碼</h1>
         </div>
       </div>
-      <p class="lede">上傳圖片或開啟相機掃描 QR 碼，解碼結果即時顯示。純前端運作，資料不會離開你的裝置。</p>
+      <p class="lede"><span data-i18n="lede">上傳圖片或<span data-i18n="btn-start-cam">開啟相機</span>掃描 QR 碼，解碼結果即時顯示。純前端運作，資料不會離開你的裝置。</span></p>
     </header>
 
     <nav class="tabs" aria-label="功能切換">
-      <a href="index.html">生成</a>
-      <a href="decode.html" class="active" aria-current="page">解碼</a>
+      <a href="index.html" data-i18n="tab-gen">生成</a>
+      <a href="decode.html" class="active" aria-current="page" data-i18n="tab-decode">解碼</a>
     </nav>
 
     <main>
       <!-- 相機掃描 -->
       <section class="card">
-        <h2>相機掃描</h2>
+        <h2 data-i18n="cam-title">相機掃描</h2>
         <div class="stack">
           <div id="reader"></div>
           <div class="btn-row">
             <button type="button" class="btn btn-primary" id="btn-start-cam">開啟相機</button>
-            <button type="button" class="btn btn-ghost" id="btn-stop-cam" disabled>停止</button>
+            <button type="button" class="btn btn-ghost" id="btn-stop-cam" disabled><span data-i18n="btn-stop-cam">停止</span></button>
           </div>
-          <p class="status" id="cam-status">尚未啟動相機</p>
-          <p class="hint">建議在光線充足處使用。行動裝置請允許相機權限。</p>
+          <p class="status" id="cam-status"><span data-i18n="cam-status">尚未啟動相機</span></p>
+          <p class="hint"><span data-i18n="cam-hint">建議在光線充足處使用。行動裝置請允許相機權限。</span></p>
         </div>
       </section>
 
       <!-- 上傳圖片 -->
       <section class="card">
-        <h2>上傳圖片解碼</h2>
+        <h2 data-i18n="upload-title">上傳圖片解碼</h2>
         <div class="stack">
           <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="選擇或拖放 QR 圖片">
-            <p><strong>點擊選擇</strong> 或拖放圖片到此處</p>
-            <p class="hint" style="margin-top:.4rem">支援 PNG、JPG、WebP、GIF</p>
+            <p><strong><span data-i18n="drop-click">點擊選擇</span></strong> <span data-i18n="drop-or">或拖放圖片到此處</span></p>
+            <p class="hint" style="margin-top:.4rem"><span data-i18n="drop-support">支援 PNG、JPG、WebP、GIF</span></p>
           </div>
           <input type="file" id="file-input" accept="image/*" />
           <p class="status" id="file-status"></p>
@@ -174,17 +225,17 @@
 
     <!-- 結果區（跨兩欄） -->
     <section class="card" style="margin-top:1.5rem">
-      <h2>解碼結果</h2>
-      <div class="result-box empty" id="result" aria-live="polite">尚未解碼任何內容</div>
+      <h2 data-i18n="result-title">解碼結果</h2>
+      <div class="result-box empty" id="result" aria-live="polite"><span data-i18n="result-empty">尚未解碼任何內容</span></div>
       <div class="btn-row" style="margin-top:1rem">
-        <button type="button" class="btn btn-primary" id="btn-copy" disabled>複製結果</button>
-        <button type="button" class="btn btn-ghost" id="btn-clear" disabled>清除</button>
+        <button type="button" class="btn btn-primary" id="btn-copy" disabled><span data-i18n="btn-copy">複製結果</span></button>
+        <button type="button" class="btn btn-ghost" id="btn-clear" disabled><span data-i18n="btn-clear">清除</span></button>
       </div>
       <p class="meta" id="result-meta"></p>
     </section>
 
     <footer>
-      方印工房 · 純前端 QR 工具 · 資料僅在本機處理
+      <span data-i18n="footer">方印工房 · 純前端 QR 工具 · 資料僅在本機處理</span>
     </footer>
   </div>
 
@@ -192,6 +243,114 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script>
     (function () {
+
+      var I18N = {
+        zh: {
+          "kicker": "方印工房",
+          "title": "即時 QR 解碼",
+          "lede": "上傳圖片或開啟相機掃描 QR 碼，解碼結果即時顯示。純前端運作，資料不會離開你的裝置。",
+          "tab-gen": "生成",
+          "tab-decode": "解碼",
+          "cam-title": "相機掃描",
+          "btn-start-cam": "開啟相機",
+          "btn-stop-cam": "停止",
+          "cam-status": "尚未啟動相機",
+          "cam-hint": "建議在光線充足處使用。行動裝置請允許相機權限。",
+          "upload-title": "上傳圖片解碼",
+          "drop-click": "點擊選擇",
+          "drop-or": "或拖放圖片到此處",
+          "drop-support": "支援 PNG、JPG、WebP、GIF",
+          "result-title": "解碼結果",
+          "result-empty": "尚未解碼任何內容",
+          "btn-copy": "複製結果",
+          "btn-clear": "清除",
+          "footer": "方印工房 · 純前端 QR 工具 · 資料僅在本機處理",
+          "status-scanning": "掃描中…",
+          "status-stopped": "相機已停止",
+          "status-found": "已解碼",
+          "copy-ok": "已複製",
+          "err-cam": "無法開啟相機，請確認權限。"
+        },
+        en: {
+          "kicker": "Fangyin Studio",
+          "title": "Live QR Decoder",
+          "lede": "Upload an image or open the camera to scan a QR code. Results appear instantly. Fully client-side — data never leaves your device.",
+          "tab-gen": "Generate",
+          "tab-decode": "Decode",
+          "cam-title": "Camera scan",
+          "btn-start-cam": "Start camera",
+          "btn-stop-cam": "Stop",
+          "cam-status": "Camera not started",
+          "cam-hint": "Use in good lighting. Allow camera permission on mobile.",
+          "upload-title": "Decode from image",
+          "drop-click": "Click to choose",
+          "drop-or": "or drop an image here",
+          "drop-support": "Supports PNG, JPG, WebP, GIF",
+          "result-title": "Decode result",
+          "result-empty": "No content decoded yet",
+          "btn-copy": "Copy result",
+          "btn-clear": "Clear",
+          "footer": "Fangyin Studio · Pure front-end QR tools · Data stays on your device",
+          "status-scanning": "Scanning…",
+          "status-stopped": "Camera stopped",
+          "status-found": "Decoded",
+          "copy-ok": "Copied",
+          "err-cam": "Unable to start camera. Please check permissions."
+        },
+        ja: {
+          "kicker": "方印工房",
+          "title": "リアルタイム QR 読取",
+          "lede": "画像をアップロードするかカメラで QR をスキャン。結果は即時表示。完全フロントエンド、データは端末から出ません。",
+          "tab-gen": "生成",
+          "tab-decode": "読取",
+          "cam-title": "カメラ読取",
+          "btn-start-cam": "カメラを開始",
+          "btn-stop-cam": "停止",
+          "cam-status": "カメラ未起動",
+          "cam-hint": "明るい場所で使用してください。モバイルではカメラ権限を許可してください。",
+          "upload-title": "画像から読取",
+          "drop-click": "クリックして選択",
+          "drop-or": "またはここに画像をドロップ",
+          "drop-support": "PNG・JPG・WebP・GIF 対応",
+          "result-title": "読取結果",
+          "result-empty": "まだ何も読取っていません",
+          "btn-copy": "結果をコピー",
+          "btn-clear": "クリア",
+          "footer": "方印工房 · 純フロントエンド QR ツール · データは端末内のみ",
+          "status-scanning": "スキャン中…",
+          "status-stopped": "カメラ停止",
+          "status-found": "読取完了",
+          "copy-ok": "コピーしました",
+          "err-cam": "カメラを起動できません。権限を確認してください。"
+        }
+      };
+      function getLang() { return localStorage.getItem("qr-lang") || "zh"; }
+      function setLang(lang) {
+        if (!I18N[lang]) lang = "zh";
+        localStorage.setItem("qr-lang", lang);
+        document.documentElement.lang = lang === "zh" ? "zh-Hant" : lang;
+        var dict = I18N[lang];
+        document.querySelectorAll("[data-i18n]").forEach(function (el) {
+          var key = el.getAttribute("data-i18n");
+          if (dict[key] != null) el.textContent = dict[key];
+        });
+        document.title = (dict["title"] || "QR Decode") + " · " + (dict["kicker"] || "");
+        document.querySelectorAll(".lang-btn").forEach(function (btn) {
+          var active = btn.getAttribute("data-lang") === lang;
+          btn.classList.toggle("active", active);
+          btn.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      }
+      function getTheme() { return localStorage.getItem("qr-theme") || "light"; }
+      function setTheme(theme) {
+        if (theme !== "dark" && theme !== "light") theme = "light";
+        localStorage.setItem("qr-theme", theme);
+        document.documentElement.setAttribute("data-theme", theme);
+        var btn = document.getElementById("theme-toggle");
+        if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
+      }
+      setTheme(getTheme());
+
       const resultEl = document.getElementById("result");
       const resultMeta = document.getElementById("result-meta");
       const btnCopy = document.getElementById("btn-copy");
@@ -363,20 +522,20 @@
       // Copy & Clear
       btnCopy.addEventListener("click", async () => {
         if (!lastResult) return;
+        const dict = I18N[getLang()] || I18N.zh;
         try {
           await navigator.clipboard.writeText(lastResult);
-          btnCopy.textContent = "已複製";
-          setTimeout(() => { btnCopy.textContent = "複製結果"; }, 1500);
+          btnCopy.textContent = dict["copy-ok"] || "已複製";
+          setTimeout(() => { btnCopy.textContent = dict["btn-copy"] || "複製結果"; }, 1500);
         } catch {
-          // fallback
           const ta = document.createElement("textarea");
           ta.value = lastResult;
           document.body.appendChild(ta);
           ta.select();
           document.execCommand("copy");
           document.body.removeChild(ta);
-          btnCopy.textContent = "已複製";
-          setTimeout(() => { btnCopy.textContent = "複製結果"; }, 1500);
+          btnCopy.textContent = dict["copy-ok"] || "已複製";
+          setTimeout(() => { btnCopy.textContent = dict["btn-copy"] || "複製結果"; }, 1500);
         }
       });
 
@@ -385,6 +544,17 @@
         fileStatus.textContent = "";
         fileStatus.className = "status";
       });
+
+      // Theme & language
+      document.getElementById("theme-toggle").addEventListener("click", function () {
+        setTheme(getTheme() === "dark" ? "light" : "dark");
+      });
+      document.querySelectorAll(".lang-btn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          setLang(btn.getAttribute("data-lang"));
+        });
+      });
+      setLang(getLang());
     })();
   </script>
 </body>
