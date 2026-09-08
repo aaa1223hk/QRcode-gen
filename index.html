@@ -194,6 +194,7 @@
 </head>
 <body>
 
+  
   <!-- 共用左側選單 -->
   <button type="button" class="menu-fab" id="menu-fab" aria-label="開啟選單" onclick="openDrawer()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
@@ -203,29 +204,30 @@
   <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
   <aside class="drawer" id="drawer" role="dialog" aria-label="選單">
     <div class="drawer-header">
-      <span class="drawer-title">選單</span>
+      <span class="drawer-title" data-i18n="menu-title">選單</span>
       <button type="button" class="drawer-close" aria-label="關閉" onclick="closeDrawer()">×</button>
     </div>
     <nav class="drawer-nav">
-      <a href="index.html" onclick="closeDrawer()">即時 QR 生成</a>
-      <a href="decode.html" onclick="closeDrawer()">QR 解碼</a>
+      <a href="index.html" onclick="closeDrawer()" data-i18n="menu-gen">即時 QR 生成</a>
+      <a href="decode.html" onclick="closeDrawer()" data-i18n="menu-decode">即時 QR 解碼</a>
     </nav>
     <div class="drawer-section">
-      <div class="drawer-section-title">其它</div>
+      <div class="drawer-section-title" data-i18n="menu-other">其它</div>
       <nav class="drawer-nav">
-        <a href="https://aaa1223hk.github.io/Pokemon-Ability-Value-Calculator/" target="_blank" rel="noopener">寶可夢數值計算器</a>
-        <a href="https://aaa1223hk.github.io/Game-Probability-Calculator/" target="_blank" rel="noopener">遊戲機率模擬器</a>
-        <a href="https://aaa1223hk.github.io/Game-lottery-calculator/" target="_blank" rel="noopener">抽蛋計算器</a>
-        <a href="https://aaa1223hk.github.io/DN-3-color-beans/" target="_blank" rel="noopener">龍之谷3色豆集古代最佳化</a>
+        <a href="https://aaa1223hk.github.io/Pokemon-Ability-Value-Calculator/" target="_blank" rel="noopener" data-i18n="menu-pokemon">寶可夢數值計算器</a>
+        <a href="https://aaa1223hk.github.io/Game-Probability-Calculator/" target="_blank" rel="noopener" data-i18n="menu-prob">遊戲機率模擬器</a>
+        <a href="https://aaa1223hk.github.io/Game-lottery-calculator/" target="_blank" rel="noopener" data-i18n="menu-gacha">抽蛋計算器</a>
+        <a href="https://aaa1223hk.github.io/DN-3-color-beans/" target="_blank" rel="noopener" data-i18n="menu-dn">龍之谷3色豆集古代最佳化</a>
       </nav>
     </div>
     <div class="drawer-footer">
       <button type="button" id="theme-toggle-drawer" class="theme-in-drawer" aria-label="切換深色模式" title="切換深色模式">
         <span class="theme-toggle-icon">🌙</span>
-        <span class="theme-toggle-text">深色模式</span>
+        <span class="theme-toggle-text" data-i18n="menu-theme-dark">深色模式</span>
       </button>
     </div>
   </aside>
+
 
   <div class="wrap">
     <div class="top-bar">
@@ -355,6 +357,16 @@ Minimum version required to store current data is: `+i+`.
           "lede": "輸入網址或文字，即時預覽、調色、調整尺寸，然後下載 PNG。不必安裝任何程式。",
           "tab-gen": "生成",
           "tab-decode": "解碼",
+          "menu-title": "選單",
+          "menu-gen": "即時 QR 生成",
+          "menu-decode": "即時 QR 解碼",
+          "menu-other": "其它",
+          "menu-pokemon": "寶可夢數值計算器",
+          "menu-prob": "遊戲機率模擬器",
+          "menu-gacha": "抽蛋計算器",
+          "menu-dn": "龍之谷3色豆集古代最佳化",
+          "menu-theme-dark": "深色模式",
+          "menu-theme-light": "淺色模式",
           "label-content": "內容",
           "hint-content": "網址、名片資訊或任何想編碼的內容，輸入後會立即更新預覽。",
           "label-fg": "前景色",
@@ -386,6 +398,16 @@ Minimum version required to store current data is: `+i+`.
           "lede": "Enter a URL or text, preview instantly, adjust colors & size, then download PNG. No install needed.",
           "tab-gen": "Generate",
           "tab-decode": "Decode",
+          "menu-title": "Menu",
+          "menu-gen": "Live QR Generator",
+          "menu-decode": "Live QR Decoder",
+          "menu-other": "Others",
+          "menu-pokemon": "Pokémon Stat Calculator",
+          "menu-prob": "Game Probability Simulator",
+          "menu-gacha": "Gacha Calculator",
+          "menu-dn": "DN 3-Color Beans Optimizer",
+          "menu-theme-dark": "Dark mode",
+          "menu-theme-light": "Light mode",
           "label-content": "Content",
           "hint-content": "URL, contact info or any text. Preview updates immediately.",
           "label-fg": "Foreground",
@@ -417,6 +439,16 @@ Minimum version required to store current data is: `+i+`.
           "lede": "URL やテキストを入力すると即時プレビュー。色・サイズを調整して PNG をダウンロード。インストール不要。",
           "tab-gen": "生成",
           "tab-decode": "読取",
+          "menu-title": "メニュー",
+          "menu-gen": "リアルタイム QR 生成",
+          "menu-decode": "リアルタイム QR 読取",
+          "menu-other": "その他",
+          "menu-pokemon": "ポケモン数値計算機",
+          "menu-prob": "ゲーム確率シミュレーター",
+          "menu-gacha": "ガチャ計算機",
+          "menu-dn": "DN 3色豆古代最適化",
+          "menu-theme-dark": "ダークモード",
+          "menu-theme-light": "ライトモード",
           "label-content": "内容",
           "hint-content": "URL・名刺情報・任意のテキスト。入力後すぐにプレビューが更新されます。",
           "label-fg": "前景色",
