@@ -26,7 +26,8 @@
 }
 .menu-fab svg { width: 20px; height: 20px; }
 
-body.dark-theme .menu-fab {
+body.dark-theme .menu-fab,
+[data-theme="dark"] .menu-fab {
   box-shadow: 0 4px 16px rgba(0,0,0,.35);
 }
 
@@ -39,7 +40,8 @@ body.dark-theme .menu-fab {
   visibility: hidden;
   transition: opacity .2s, visibility .2s;
 }
-body.dark-theme .drawer-overlay { background: rgba(0,0,0,.55); }
+body.dark-theme .drawer-overlay,
+[data-theme="dark"] .drawer-overlay { background: rgba(0,0,0,.55); }
 .drawer-overlay.open {
   opacity: 1;
   visibility: visible;
@@ -60,9 +62,11 @@ body.dark-theme .drawer-overlay { background: rgba(0,0,0,.55); }
   flex-direction: column;
   padding: 1.25rem 1rem 1.5rem;
 }
-body.dark-theme .drawer {
-  background: #121925;
+body.dark-theme .drawer,
+[data-theme="dark"] .drawer {
+  background: var(--surface, var(--card, #1e1b17));
   box-shadow: 4px 0 28px rgba(0,0,0,.45);
+  color: var(--fg, var(--text, #f2efe6));
 }
 .drawer.open { transform: translateX(0); }
 
@@ -81,7 +85,8 @@ body.dark-theme .drawer {
   font-size: 1.25rem; line-height: 1;
 }
 .drawer-close:hover { background: rgba(0,0,0,.05); color: var(--text, var(--fg, #1a1a2e)); }
-body.dark-theme .drawer-close:hover { background: rgba(255,255,255,.06); }
+body.dark-theme .drawer-close:hover,
+[data-theme="dark"] .drawer-close:hover { background: rgba(255,255,255,.06); }
 
 .drawer-nav {
   display: flex;
@@ -110,13 +115,17 @@ body.dark-theme .drawer-close:hover { background: rgba(255,255,255,.06); }
   color: var(--accent, var(--fg, #3b82f6));
   font-weight: 600;
 }
-body.dark-theme .drawer-nav a:hover {
-  background: rgba(110, 168, 255, 0.1);
-  border-color: rgba(110, 168, 255, 0.3);
+body.dark-theme .drawer-nav a:hover,
+[data-theme="dark"] .drawer-nav a:hover {
+  background: var(--surface-2, rgba(242,239,230,0.08));
+  border-color: var(--border, rgba(242,239,230,0.2));
+  color: var(--fg, var(--text, #f2efe6));
 }
-body.dark-theme .drawer-nav a.active {
-  background: rgba(110, 168, 255, 0.14);
-  border-color: rgba(110, 168, 255, 0.35);
+body.dark-theme .drawer-nav a.active,
+[data-theme="dark"] .drawer-nav a.active {
+  background: var(--surface-2, rgba(242,239,230,0.12));
+  border-color: var(--border, rgba(242,239,230,0.28));
+  color: var(--fg, var(--text, #f2efe6));
 }
 
 /* 區塊標題（例如「其它」） */
@@ -164,9 +173,11 @@ body.dark-theme .drawer-nav a.active {
   border-color: rgba(59, 130, 246, 0.25);
   color: var(--accent, var(--fg, #3b82f6));
 }
-body.dark-theme .theme-in-drawer:hover {
-  background: rgba(110, 168, 255, 0.1);
-  border-color: rgba(110, 168, 255, 0.3);
+body.dark-theme .theme-in-drawer:hover,
+[data-theme="dark"] .theme-in-drawer:hover {
+  background: var(--surface-2, rgba(242,239,230,0.08));
+  border-color: var(--border, rgba(242,239,230,0.2));
+  color: var(--fg, var(--text, #f2efe6));
 }
 
 /* 若頁面有舊的右上角主題按鈕，可隱藏 */
