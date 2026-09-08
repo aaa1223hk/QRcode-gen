@@ -1,6 +1,6 @@
 /**
  * 共用左側選單 (drawer) — QR / 方印工房 適配版
- * 支援 data-theme（QR）與 body.dark-theme（寶可夢）
+ * 支援 data-theme、body.dark-theme，並配合頁面 data-i18n
  */
 (function () {
   'use strict';
@@ -34,6 +34,17 @@
     return 'light';
   }
 
+  function themeLabel(dark) {
+    var map = {
+      dark: { zh: '淺色模式', en: 'Light mode', ja: 'ライトモード' },
+      light: { zh: '深色模式', en: 'Dark mode', ja: 'ダークモード' }
+    };
+    var lang = 'zh';
+    try { lang = localStorage.getItem('qr-lang') || 'zh'; } catch (e) {}
+    var key = dark ? 'dark' : 'light';
+    return (map[key] && map[key][lang]) || (dark ? '淺色模式' : '深色模式');
+  }
+
   function applyTheme(theme) {
     var dark = theme === 'dark';
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
@@ -43,22 +54,22 @@
       localStorage.setItem(THEME_KEY_POKE, dark ? 'dark' : 'light');
     } catch (e) {}
 
-    // drawer 內按鈕
     var btn = document.getElementById('theme-toggle-drawer');
     if (btn) {
       var icon = btn.querySelector('.theme-toggle-icon');
       var text = btn.querySelector('.theme-toggle-text');
       if (icon) icon.textContent = dark ? '☀️' : '🌙';
-      if (text) text.textContent = dark ? '淺色模式' : '深色模式';
-      btn.setAttribute('aria-label', dark ? '切換淺色模式' : '切換深色模式');
-      btn.title = dark ? '切換淺色模式' : '切換深色模式';
+      if (text) {
+        text.textContent = themeLabel(dark);
+        text.setAttribute('data-i18n', dark ? 'menu-theme-light' : 'menu-theme-dark');
+      }
+      btn.setAttribute('aria-label', themeLabel(dark));
+      btn.title = themeLabel(dark);
     }
-    // 同步右上角 theme-btn 圖示（不重新綁定事件，避免 double toggle）
     var topBtn = document.querySelector('.theme-btn');
     if (topBtn) topBtn.textContent = dark ? '☀️' : '🌙';
   }
 
-  // 初始化
   var saved = null;
   try {
     saved = localStorage.getItem(THEME_KEY_QR) || localStorage.getItem(THEME_KEY_POKE);
@@ -69,7 +80,6 @@
     applyTheme(getCurrentTheme());
   }
 
-  // 只綁 drawer 內的主題按鈕
   var drawerThemeBtn = document.getElementById('theme-toggle-drawer');
   if (drawerThemeBtn) {
     drawerThemeBtn.addEventListener('click', function () {
@@ -77,7 +87,6 @@
     });
   }
 
-  // 標記目前頁面 active（僅相對路徑）
   var path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
   document.querySelectorAll('.drawer-nav a').forEach(function (a) {
     var href = (a.getAttribute('href') || '').toLowerCase();
